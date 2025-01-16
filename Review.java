@@ -38,7 +38,7 @@ public class Review {
       Scanner input = new Scanner(new File("positiveAdjectives.txt"));
       while(input.hasNextLine()){
         String temp = input.nextLine().trim();
-        System.out.println(temp);
+        //System.out.println(temp);
         posAdjectives.add(temp);
       }
       input.close();
@@ -170,7 +170,7 @@ public class Review {
   public static double totalSentiment(String filename)
   {
     // read in the file contents into a string using the textToString method with the filename
-
+    String review = textToString(filename);
     // set up a sentimentTotal variable
     double sentimentTotal = 0;
 
@@ -179,8 +179,29 @@ public class Review {
        // find each word
        // add in its sentimentVal
        // set the file contents to start after this word
-   
-   
+    // define some variables - word, 
+    String word = "";
+    int index=0;
+
+    while (review.length()>0)
+    {
+      // count words in review
+      index = review.indexOf(" ");
+      if (index==-1)
+      {
+        review=review + " ";
+        index = review.indexOf(" ");
+      }
+      // special case when we are at end of review and there are no more spaces
+
+      word = review.substring(0,index);
+      word = removePunctuation(word);
+      sentimentTotal += sentimentVal(word);
+      // get each words value
+      review = review.substring(index+1);
+      // update review
+      // repeat until review is done
+    }
 
 
 
@@ -194,14 +215,58 @@ public class Review {
   public static int starRating(String filename)
   {
     // call the totalSentiment method with the fileName
-
+    double value = totalSentiment(filename);
     // determine number of stars between 0 and 4 based on totalSentiment value 
-    int stars = 0; // change this!
+    int stars = 0;// change this!
     // write if statements here
-
-
-  
+    if (value>=25)
+    {
+      stars=5;
+    }
+    else if (value>=15 && value<25)
+    {
+      stars=4;
+    }
+    else if (value>=5 && value<15)
+    {
+      stars=3;
+    }
+    else if (value>=0 && value<5)
+    {
+      stars=2;
+    }
+    else
+    {
+      stars=1;
+    }
     // return number of stars
     return stars; 
+  }
+
+  public static String fakeReview(String filename, Boolean positive)
+  {
+    String review = textToString(filename);
+    int indexStar;
+    int indexSpace;
+    String adj;
+    String fr ="";
+    while(review.indexOf("*")!=-1)
+    {
+      indexStar=review.indexOf("*");
+      fr += review.substring(0,indexStar);
+      review = review.substring(indexStar + 1);
+      indexSpace = review.indexOf(" ");
+      if (positive)
+      {
+        adj = randomPositiveAdj()+ " ";
+      }
+      else 
+      {
+        adj = randomNegativeAdj()+ " ";
+      }
+      fr += adj; 
+      review = review.substring(indexSpace + 1);      
+    }
+    return fr + review;
   }
 }
